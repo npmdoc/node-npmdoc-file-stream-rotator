@@ -97,6 +97,52 @@
 
         </li>
 
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">file-stream-rotator.</span>index</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.file-stream-rotator.index">module file-stream-rotator.index</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.file-stream-rotator.index.getDate">
+            function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>getDate
+            <span class="apidocSignatureSpan">(format, date_format)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.file-stream-rotator.index.getFrequency">
+            function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>getFrequency
+            <span class="apidocSignatureSpan">(frequency)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.file-stream-rotator.index.getStream">
+            function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>getStream
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.file-stream-rotator.index.parseFileSize">
+            function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>parseFileSize
+            <span class="apidocSignatureSpan">(size)</span>
+            </a>
+
+        </li>
+
     </ol></li>
 
 </ol></div>
@@ -349,6 +395,298 @@ var FileStreamRotator = {};
     <h2>
         <a href="#apidoc.element.file-stream-rotator.parseFileSize" id="apidoc.element.file-stream-rotator.parseFileSize">
         function <span class="apidocSignatureSpan">file-stream-rotator.</span>parseFileSize
+        <span class="apidocSignatureSpan">(size)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">parseFileSize = function (size) {
+    if(size &#x26;&#x26; typeof size == &#x22;string&#x22;){
+        var _s = size.toLowerCase().match(/^((?:0\.)?\d+)([k|m|g])$/);
+        if(_s){
+            switch(_s[2]){
+                case &#x27;k&#x27;:
+                    return _s[1]*1024
+                case &#x27;m&#x27;:
+                    return _s[1]*1024*1024
+                case &#x27;g&#x27;:
+                    return _s[1]*1024*1024*1024
+            }
+        }
+    }
+    return null;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    frequencyMetaData = self.getFrequency(options.frequency);
+}
+
+var fileSize = null;
+var fileCount = 0;
+var curSize = 0;
+if(options.size){
+    fileSize = FileStreamRotator.<span class="apidocCodeKeywordSpan">parseFileSize</span>(options.size);
+}
+
+var dateFormat = (options.date_format || DATE_FORMAT);
+if(frequencyMetaData &#x26;&#x26; frequencyMetaData.type == &#x22;daily&#x22;){
+    if(!options.date_format){
+        dateFormat = &#x22;YYYY-MM-DD&#x22;;
+    }
+...</pre></li>
+    </ul>
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.file-stream-rotator.index" id="apidoc.module.file-stream-rotator.index">module file-stream-rotator.index</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.file-stream-rotator.index.getDate" id="apidoc.element.file-stream-rotator.index.getDate">
+        function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>getDate
+        <span class="apidocSignatureSpan">(format, date_format)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">getDate = function (format, date_format) {
+    date_format = date_format || DATE_FORMAT;
+    if (format &#x26;&#x26; staticFrequency.indexOf(format.type) !== -1) {
+        switch (format.type) {
+            case &#x27;m&#x27;:
+                var minute = Math.floor(moment().minutes() / format.digit) * format.digit;
+                return moment().minutes(minute).format(date_format);
+                break;
+            case &#x27;h&#x27;:
+                var hour = Math.floor(moment().hour() / format.digit) * format.digit;
+                return moment().hour(hour).format(date_format);
+                break;
+            case &#x27;daily&#x27;:
+            case &#x27;custom&#x27;:
+            case &#x27;test&#x27;:
+                return moment().format(date_format);
+        }
+    }
+    return moment().format(date_format);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    if(moment().format(dateFormat) != moment().add(2,&#x22;hours&#x22;).format(dateFormat) || moment().format(dateFormat) == moment
+().add(1,&#x22;day&#x22;).format(dateFormat)){
+        console.log(&#x22;Changing type to custom as date format changes more often than once a day or not every day&#x22;);
+        frequencyMetaData.type = &#x22;custom&#x22;;
+    }
+}
+
+if (frequencyMetaData) {
+    curDate = (options.frequency ? self.<span class="apidocCodeKeywordSpan">getDate</span>(frequencyMetaData,dateFormat) : &#x22
+;&#x22;);
+}
+
+var filename = options.filename;
+var oldFile = null;
+var logfile = filename + (curDate ? &#x22;.&#x22; + curDate : &#x22;&#x22;);
+if(filename.match(/%DATE%/)){
+    logfile = filename.replace(/%DATE%/g,(curDate?curDate:self.getDate(null,dateFormat)));
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.file-stream-rotator.index.getFrequency" id="apidoc.element.file-stream-rotator.index.getFrequency">
+        function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>getFrequency
+        <span class="apidocSignatureSpan">(frequency)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">getFrequency = function (frequency) {
+    var _f = frequency.toLowerCase().match(/^(\d+)([m|h])$/)
+    if(_f){
+        return _checkNumAndType(_f[2], parseInt(_f[1]));
+    }
+
+    var dailyOrTest = _checkDailyAndTest(frequency);
+    if (dailyOrTest) {
+        return dailyOrTest;
+    }
+
+    return false;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+if (!options.filename) {
+    console.error(&#x22;No filename supplied. Defaulting to STDOUT&#x22;);
+    return process.stdout;
+}
+
+if (options.frequency) {
+    frequencyMetaData = self.<span class="apidocCodeKeywordSpan">getFrequency</span>(options.frequency);
+}
+
+var fileSize = null;
+var fileCount = 0;
+var curSize = 0;
+if(options.size){
+    fileSize = FileStreamRotator.parseFileSize(options.size);
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.file-stream-rotator.index.getStream" id="apidoc.element.file-stream-rotator.index.getStream">
+        function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>getStream
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">getStream = function (options) {
+    var frequencyMetaData = null;
+    var curDate = null;
+    var self = this;
+
+    if (!options.filename) {
+        console.error(&#x22;No filename supplied. Defaulting to STDOUT&#x22;);
+        return process.stdout;
+    }
+
+    if (options.frequency) {
+        frequencyMetaData = self.getFrequency(options.frequency);
+    }
+
+    var fileSize = null;
+    var fileCount = 0;
+    var curSize = 0;
+    if(options.size){
+        fileSize = FileStreamRotator.parseFileSize(options.size);
+    }
+
+    var dateFormat = (options.date_format || DATE_FORMAT);
+    if(frequencyMetaData &#x26;&#x26; frequencyMetaData.type == &#x22;daily&#x22;){
+        if(!options.date_format){
+            dateFormat = &#x22;YYYY-MM-DD&#x22;;
+        }
+        if(moment().format(dateFormat) != moment().add(2,&#x22;hours&#x22;).format(dateFormat) || moment().format(dateFormat) == moment().
+add(1,&#x22;day&#x22;).format(dateFormat)){
+            console.log(&#x22;Changing type to custom as date format changes more often than once a day or not every day&#x22;);
+            frequencyMetaData.type = &#x22;custom&#x22;;
+        }
+    }
+
+    if (frequencyMetaData) {
+        curDate = (options.frequency ? self.getDate(frequencyMetaData,dateFormat) : &#x22;&#x22;);
+    }
+
+    var filename = options.filename;
+    var oldFile = null;
+    var logfile = filename + (curDate ? &#x22;.&#x22; + curDate : &#x22;&#x22;);
+    if(filename.match(/%DATE%/)){
+        logfile = filename.replace(/%DATE%/g,(curDate?curDate:self.getDate(null,dateFormat)));
+    }
+    var verbose = (options.verbose !== undefined ? options.verbose : true);
+    if (verbose) {
+        console.log(&#x22;Logging to&#x22;, logfile);
+    }
+
+    if(fileSize){
+        var t_log = logfile;
+        var f = null;
+        while(f = fs.existsSync(t_log)){
+            fileCount++;
+            t_log = logfile + &#x22;.&#x22; + fileCount;
+        }
+        logfile = t_log;
+    }
+
+    mkDirForFile(logfile);
+
+    var rotateStream = fs.createWriteStream(logfile, {flags: &#x27;a&#x27;});
+    if (curDate &#x26;&#x26; frequencyMetaData &#x26;&#x26; (staticFrequency.indexOf(frequencyMetaData.type) &#x3e; -1)) {
+        if (verbose) {
+            console.log(&#x22;Rotating file&#x22;, frequencyMetaData.type);
+        }
+        var stream = new EventEmitter();
+        stream.end = function(){
+            rotateStream.end.apply(rotateStream,arguments);
+        };
+        BubbleEvents(rotateStream,stream);
+
+        stream.write = (function (str, encoding) {
+            var newDate = this.getDate(frequencyMetaData,dateFormat);
+            if (newDate != curDate || (fileSize &#x26;&#x26; curSize &#x3e; fileSize)) {
+                var newLogfile = filename + (curDate ? &#x22;.&#x22; + newDate : &#x22;&#x22;);
+                if(filename.match(/%DATE%/) &#x26;&#x26; curDate){
+                    newLogfile = filename.replace(/%DATE%/g,newDate);
+                }
+
+                if(fileSize &#x26;&#x26; curSize &#x3e; fileSize){
+                    fileCount++;
+                    newLogfile += &#x22;.&#x22; + fileCount;
+                }else{
+                    // reset file count
+                    fileCount = 0;
+                }
+                curSize = 0;
+
+                if (verbose) {
+                    console.log(&#x22;Changing logs from %s to %s&#x22;, logfile, newLogfile);
+                }
+                curDate = newDate;
+                oldFile = logfile;
+                logfile = newLogfile;
+                rotateStream.destroy();
+
+                mkDirForFile(logfile);
+
+                rotateStream = fs.createWriteStream(newLogfile, {flags: &#x27;a&#x27;});
+                stream.emit(&#x27;new&#x27;,newLogfile);
+                stream.emit(&#x27;rotate&#x27;,oldFile, newLogfile);
+                BubbleEvents(rotateStream,stream);
+            }
+            rotateStream.write(str, encoding);
+            curSize += str.length
+        }).bind(this);
+        process.nextTick(function(){
+            stream.emit(&#x27;new&#x27;,logfile);
+        })
+        return stream;
+    } else {
+        if (verbose) {
+            console.log(&#x22;File won&#x27;t be rotated&#x22;, options.frequency, frequencyMetaData &#x26;&#x26; frequencyMetaData.type);
+        }
+        process.nextTick(function(){
+            rotateStream.emit(&#x27;new&#x27;,logfile);
+        })
+        return rotateStream;
+    }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+ *   - `filename`   Filename including full path used by the stream
+ *   - `frequency`  How often to rotate. At present only &#x27;daily&#x27; and &#x27;test&#x27; are available. &#x27;test&#x27;
+rotates every minute.
+ *                  If frequency is set to none of the above, a YYYYMMDD string will be added to the end of the filename.
+ *   - `verbose`    If set, it will log to STDOUT when it rotates files and name of log file. Default is TRUE.
+ *
+ * To use with Express / Connect, use as below.
+ *
+ * var rotatingLogStream = require(&#x27;FileStreamRotator&#x27;).<span class="apidocCodeKeywordSpan">getStream</span>({filename
+:&#x22;/tmp/test.log&#x22;, frequency:&#x22;daily&#x22;, verbose: false})
+ * app.use(express.logger({stream: rotatingLogStream, format: &#x22;default&#x22;}));
+ *
+ * @param {Object} options
+ * @return {Object}
+ * @api public
+ */
+var FileStreamRotator = {};
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.file-stream-rotator.index.parseFileSize" id="apidoc.element.file-stream-rotator.index.parseFileSize">
+        function <span class="apidocSignatureSpan">file-stream-rotator.index.</span>parseFileSize
         <span class="apidocSignatureSpan">(size)</span>
         </a>
     </h2>
