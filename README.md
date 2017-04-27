@@ -1,6 +1,6 @@
 # npmdoc-file-stream-rotator
 
-#### api documentation for  [file-stream-rotator (v0.1.0)](https://github.com/holidayextras/file-stream-rotator#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-file-stream-rotator.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-file-stream-rotator) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-file-stream-rotator.svg)](https://travis-ci.org/npmdoc/node-npmdoc-file-stream-rotator)
+#### basic api documentation for  [file-stream-rotator (v0.1.0)](https://github.com/holidayextras/file-stream-rotator#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-file-stream-rotator.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-file-stream-rotator) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-file-stream-rotator.svg)](https://travis-ci.org/npmdoc/node-npmdoc-file-stream-rotator)
 
 #### Automated stream rotation
 
@@ -97,7 +97,8 @@
     "scripts": {
         "test": "node test.js"
     },
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "bin": {}
 }
 ```
 
